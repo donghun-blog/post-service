@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_BRANCH = 'develop'
+        GIT_REPOSITORY_URL = 'https://github.com/donghun-blog/post-service.git'
+
+        repository = "alswn4516/donghun-blog-post-service"
+        DOCKERHUB_CREDENTIALS = credentials('docker_hub_user_credential')
+        DOCKER_CONTAINER_NAME = 'donghun-blog-post-service'
+
+        PROFILE='-e "SPRING_PROFILES_ACTIVE=prod"'
+        INTERNAL_PORT = 9002
+        
+        SSH_CMD = 'ssh -i /var/lib/jenkins/.ssh/donghun.pem ubuntu@15.164.15.10'
+        ENV_FILE = '--env-file=./env/post-service.env'
+        NETWORK = '--net donghun-blog-network'
+
+        DISCORD_WEBHOOK_URL = credentials("discord_webhook")
+    }
+
+    stages {
+        stage('checkout') {
+          steps {
+            git branch: "$GIT_BRANCH",
+                url: "$GIT_REPOSITORY_URL",
+                credentialsId: 'github_access_token_credential'
+            }
+        }
+
+        stage('Gradle Build') {
+          steps {
+                sh "chmod +x gradlew"
+                sh """
+                   ./gradlew clean test integrationTest build bootJar
+                   """
+            }
+        }
+
+        stage("Dockerize") {
+            steps {
+                sh "docker build -t $repository ."
+                sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                sh "docker push $repository"
+                sh "docker rmi $repository"
+            }
+        }
+
+         stage("Deploy to EC2") {
+            steps {
+                  sh "$SSH_CMD 'docker pull $repository'"
+                  sh "$SSH_CMD 'docker stop $DOCKER_CONTAINER_NAME || true'"
+                  sh "$SSH_CMD 'docker rm $DOCKER_CONTAINER_NAME || true'"
+                  sh "$SSH_CMD 'docker run -d --name $DOCKER_CONTAINER_NAME $NETWORK $PROFILE -p $INTERNAL_PORT $ENV_FILE $repository'"
+                  sh "$SSH_CMD 'docker images -qf dangling=true | xargs -I{} docker rmi {}'"
+            }
+         }
+    }
+
+    post {
+            success {
+                discordSend title: "Post Service CI/CD 알림",
+                            description: "post-service CI/CD 결과",
+                            footer: "post-service 빌드 및 배포에 성공했습니다.",
+                            link: env.BUILD_URL, result: currentBuild.currentResult,
+                            webhookURL: env.DISCORD_WEBHOOK_URL
+            }
+            failure {
+                discordSend title: "Post Service CI/CD 알림",
+                            description: "post-service CI/CD 결과",
+                            footer: "post-service 빛드 및 배포에 실패했습니다.",
+                            link: env.BUILD_URL, result: currentBuild.currentResult,
+                            webhookURL: env.DISCORD_WEBHOOK_URL
+            }
+
+          always {
+                    cleanWs(cleanWhenNotBuilt: false,
+                            deleteDirs: true,
+                            disableDeferredWipeout: true,
+                            notFailBuild: true)
+                }
+     }
+}
