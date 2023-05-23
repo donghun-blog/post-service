@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static donghun.me.postservice.domain.exception.PostErrorCode.POST_NOT_FOUND;
 
@@ -36,7 +37,7 @@ public class PostCommandService implements PostCommandUseCase {
 
         Post post = Post.Factory.create(domainModelDto);
 
-        if(!post.isThumbnailEmpty()) {
+        if(!post.isThumbnailEmpty() && !Objects.isNull(command.thumbnail())) {
             uploadImagePort.upload(post.getThumbnail(), command.thumbnail());
         }
 
