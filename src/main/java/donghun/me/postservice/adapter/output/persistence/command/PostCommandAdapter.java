@@ -20,4 +20,9 @@ public class PostCommandAdapter implements CommandPostPort {
         PostEntity postEntity = postMapper.toEntity(post);
         return postMapper.toDomainModel(postRepository.save(postEntity));
     }
+
+    @Override
+    public void delete(Long postId) {
+        postRepository.deleteById(postId);
+    }
 }
