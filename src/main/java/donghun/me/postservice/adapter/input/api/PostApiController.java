@@ -2,6 +2,7 @@ package donghun.me.postservice.adapter.input.api;
 
 import donghun.me.postservice.adapter.input.api.dto.BaseResponse;
 import donghun.me.postservice.adapter.input.api.dto.CreatePost;
+import donghun.me.postservice.adapter.input.api.dto.DeletePost;
 import donghun.me.postservice.application.port.input.PostCommandUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,11 @@ public class PostApiController {
     ) {
         Long postId = postCommandUseCase.createPost(request.toCommand(thumbnail));
         return CreatePost.Response.success(postId);
+    }
+
+    @DeleteMapping("/{postId}")
+    public BaseResponse<DeletePost.Response> delete(@PathVariable Long postId) {
+        postCommandUseCase.deletePost(postId);
+        return DeletePost.Response.success(postId);
     }
 }

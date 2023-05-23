@@ -4,4 +4,5 @@ import donghun.me.postservice.application.dto.CreatePostCommand;
 
 public interface PostCommandUseCase {
     Long createPost(CreatePostCommand command);
+    void deletePost(Long postId);
 }
