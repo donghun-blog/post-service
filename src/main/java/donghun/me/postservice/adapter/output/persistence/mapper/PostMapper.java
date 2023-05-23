@@ -28,6 +28,8 @@ public class PostMapper {
                                      .map(te -> tagMapper.toDomainModel(te.getTag()))
                                      .collect(Collectors.toList())
                    )
+                   .createdAt(postEntity.getCreatedAt())
+                   .modifiedAt(postEntity.getModifiedAt())
                    .build();
     }
 
