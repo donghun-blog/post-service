@@ -30,7 +30,10 @@ public class PostCommandService implements PostCommandUseCase {
         CreatePostDomainModelDto domainModelDto = command.toDomainModelDto(tags);
 
         Post post = Post.Factory.create(domainModelDto);
-        uploadImagePort.upload(post.getThumbnail(), command.thumbnail());
+
+        if(!post.isThumbnailEmpty()) {
+            uploadImagePort.upload(post.getThumbnail(), command.thumbnail());
+        }
 
         return commandPostPort.save(post).getId();
     }

@@ -50,6 +50,9 @@ public class Post {
         }
     }
 
+    public boolean isThumbnailEmpty() {
+        return !hasText(thumbnail);
+    }
     public List<Tag> getTags() {
         return tags.getTags();
     }
