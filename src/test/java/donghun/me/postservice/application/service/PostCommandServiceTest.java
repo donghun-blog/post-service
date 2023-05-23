@@ -3,6 +3,7 @@ package donghun.me.postservice.application.service;
 import donghun.me.postservice.adapter.output.persistence.entity.PostEntity;
 import donghun.me.postservice.adapter.output.persistence.entity.TagEntity;
 import donghun.me.postservice.adapter.output.persistence.repository.PostRepository;
+import donghun.me.postservice.adapter.output.persistence.repository.PostTagRepository;
 import donghun.me.postservice.adapter.output.persistence.repository.TagRepository;
 import donghun.me.postservice.application.dto.CreatePostCommand;
 import donghun.me.postservice.application.port.output.UploadImagePort;
@@ -10,6 +11,8 @@ import donghun.me.postservice.common.EmptyParameters;
 import donghun.me.postservice.common.environment.AbstractMysqlTestContainer;
 import donghun.me.postservice.domain.exception.PostException;
 import donghun.me.postservice.fixture.CreatePostCommandFixture;
+import donghun.me.postservice.fixture.PostEntityFixture;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,6 +46,9 @@ class PostCommandServiceTest extends AbstractMysqlTestContainer {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private PostTagRepository postTagRepository;
 
     @DisplayName("데이터베이스에 태그가 없는 경우 신규 태그 등록 후 게시글 도메인 등록한 다음 값을 확인한다.")
     @Test
@@ -275,5 +281,50 @@ class PostCommandServiceTest extends AbstractMysqlTestContainer {
         assertThatThrownBy(() -> postCommandService.createPost(command))
                 .isInstanceOf(PostException.class)
                 .hasFieldOrPropertyWithValue("errorCode", IMAGE_EXTENSION_NOT_SUPPORT);
+    }
+
+    @DisplayName("게시글 삭제 시 게시글이 존재하지 않는 경우 예외를 반환한다.")
+    @Test
+    void deletePostPostExistException() {
+        // given
+
+        // when & then
+        Assertions.assertThatThrownBy(() -> postCommandService.deletePost(1L))
+                  .isInstanceOf(PostException.class)
+                  .hasFieldOrPropertyWithValue("errorCode", POST_NOT_FOUND);
+    }
+
+    @DisplayName("게시글 존재하는 경우 삭제 후 삭제되었는지 확인한다.")
+    @Test
+    void deletePost() {
+        // given
+        TagEntity tagEntity1 = TagEntity.builder()
+                                        .name("Spring Boot")
+                                        .build();
+        TagEntity tagEntity2 = TagEntity.builder()
+                                        .name("Spring Security")
+                                        .build();
+
+        tagRepository.save(tagEntity1);
+        tagRepository.save(tagEntity2);
+
+        PostEntity postEntity = PostEntityFixture.complete()
+                                                 .id(null)
+                                                 .build();
+        postEntity.addTag(tagEntity1);
+        postEntity.addTag(tagEntity2);
+
+        postRepository.save(postEntity);
+
+        // when
+        postCommandService.deletePost(postEntity.getId());
+
+        // then
+        assertThat(tagRepository.findAll())
+                .hasSize(2);
+        assertThat(postTagRepository.findAll())
+                .hasSize(0);
+        assertThat(postRepository.findAll())
+                .hasSize(0);
     }
 }

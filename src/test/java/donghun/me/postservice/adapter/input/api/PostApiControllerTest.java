@@ -9,15 +9,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
+import org.mockito.BDDMockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -119,6 +123,25 @@ class PostApiControllerTest extends AbstractPresentationTest {
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.body.postId").value(postId))
         ;
+    }
+
+    @DisplayName("게시글 삭제 후 삭제된 게시글 ID를 응답한다.")
+    @Test
+    void delete() throws Exception {
+        // given
+        final Long postId = 1L;
+
+        willDoNothing().given(postCommandUseCase)
+                          .deletePost(any());
+
+        // when & then
+        mockMvc.perform(
+                       MockMvcRequestBuilders.delete(BASE_URL + "/{postId}", postId)
+               )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.body.postId").value(postId));
+
     }
 
     private MockMultipartFile createMockPost(CreatePost.Request request) throws JsonProcessingException {
