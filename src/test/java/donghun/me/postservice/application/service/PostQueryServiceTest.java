@@ -71,16 +71,17 @@ class PostQueryServiceTest extends AbstractServiceMysqlTestContainer {
         // then
         assertThat(result)
                 .isNotNull()
-                .extracting("id", "title", "contents","visible",
-                        "thumbnail", "summary")
+                .extracting("id", "title", "contents","visible", "summary")
                 .contains(
                         postEntity.getId(),
                         postEntity.getTitle(),
                         postEntity.getContents(),
                         postEntity.isVisible(),
-                        postEntity.getThumbnail(),
                         postEntity.getSummary()
                 );
+
+        assertThat(result.thumbnail())
+                .isNotNull();
 
         assertThat(result.tags())
                 .isNotNull()
@@ -108,17 +109,18 @@ class PostQueryServiceTest extends AbstractServiceMysqlTestContainer {
         // then
         assertThat(result)
                 .isNotNull()
-                .extracting("id", "title", "contents","visible",
-                        "thumbnail", "summary")
+                .extracting("id", "title", "contents", "visible", "summary")
                 .contains(
                         postEntity.getId(),
                         postEntity.getTitle(),
                         postEntity.getContents(),
                         postEntity.isVisible(),
-                        postEntity.getThumbnail(),
                         postEntity.getSummary()
                 );
 
+        assertThat(result.thumbnail())
+                .isNotNull();
+        
         assertThat(result.tags())
                 .isNotNull()
                 .isEmpty();
