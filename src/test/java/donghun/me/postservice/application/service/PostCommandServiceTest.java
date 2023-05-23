@@ -8,7 +8,7 @@ import donghun.me.postservice.adapter.output.persistence.repository.TagRepositor
 import donghun.me.postservice.application.dto.CreatePostCommand;
 import donghun.me.postservice.application.port.output.UploadImagePort;
 import donghun.me.postservice.common.EmptyParameters;
-import donghun.me.postservice.common.environment.AbstractServiceMysqlTestContainer;
+import donghun.me.postservice.common.environment.AbstractMysqlTestContainer;
 import donghun.me.postservice.domain.exception.PostException;
 import donghun.me.postservice.fixture.CreatePostCommandFixture;
 import donghun.me.postservice.fixture.PostEntityFixture;
@@ -33,7 +33,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
-class PostCommandServiceTestService extends AbstractServiceMysqlTestContainer {
+class PostCommandServiceTest extends AbstractMysqlTestContainer {
 
     @MockBean
     private UploadImagePort uploadImagePort;

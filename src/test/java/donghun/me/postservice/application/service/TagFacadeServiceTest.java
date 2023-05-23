@@ -2,7 +2,7 @@ package donghun.me.postservice.application.service;
 
 import donghun.me.postservice.adapter.output.persistence.entity.TagEntity;
 import donghun.me.postservice.adapter.output.persistence.repository.TagRepository;
-import donghun.me.postservice.common.environment.AbstractServiceMysqlTestContainer;
+import donghun.me.postservice.common.environment.AbstractMysqlTestContainer;
 import donghun.me.postservice.domain.model.Tag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TagFacadeServiceTestService extends AbstractServiceMysqlTestContainer {
+class TagFacadeServiceTest extends AbstractMysqlTestContainer {
 
     @Autowired
     private TagFacadeService tagFacadeService;

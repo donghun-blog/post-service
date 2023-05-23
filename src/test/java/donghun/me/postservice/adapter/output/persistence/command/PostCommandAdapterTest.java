@@ -6,7 +6,7 @@ import donghun.me.postservice.adapter.output.persistence.mapper.TagMapper;
 import donghun.me.postservice.adapter.output.persistence.repository.PostRepository;
 import donghun.me.postservice.adapter.output.persistence.repository.PostTagRepository;
 import donghun.me.postservice.adapter.output.persistence.repository.TagRepository;
-import donghun.me.postservice.common.environment.AbstractServiceMysqlTestContainer;
+import donghun.me.postservice.common.environment.AbstractMysqlTestContainer;
 import donghun.me.postservice.domain.model.Post;
 import donghun.me.postservice.domain.model.Tag;
 import donghun.me.postservice.fixture.PostEntityFixture;
@@ -20,7 +20,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
-class PostCommandAdapterTestService extends AbstractServiceMysqlTestContainer {
+class PostCommandAdapterTest extends AbstractMysqlTestContainer {
 
     @Autowired
     private PostCommandAdapter postCommandAdapter;
@@ -95,7 +95,6 @@ class PostCommandAdapterTestService extends AbstractServiceMysqlTestContainer {
         tagRepository.save(tagEntity2);
 
         PostEntity postEntity = PostEntityFixture.complete()
-                                                 .id(null)
                                                  .build();
 
         postEntity.addTag(tagEntity1);

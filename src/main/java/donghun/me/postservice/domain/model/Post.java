@@ -7,16 +7,14 @@ import donghun.me.postservice.domain.service.ContentsAnalyzeDomainService;
 import donghun.me.postservice.domain.service.ThumbnailDomainService;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.cglib.core.Local;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static donghun.me.postservice.domain.exception.PostErrorCode.IMAGE_EXTENSION_NOT_SUPPORT;
 import static org.springframework.util.StringUtils.hasText;
 
 @Getter
-public class Post extends AbstractBaseDomainModel {
+public class Post {
     private final Long id;
     private String title;
     private String contents;
@@ -25,11 +23,9 @@ public class Post extends AbstractBaseDomainModel {
     private String thumbnail;
     private String summary;
 
-
     @Builder
-    private Post(Long id, String title, String contents, List<Tag> tags, boolean visible, String thumbnail, String summary,
-                 LocalDateTime createdAt, LocalDateTime modifiedAt) {
-        super(createdAt, modifiedAt);
+    private Post(Long id, String title, String contents, List<Tag> tags, boolean visible, String thumbnail, String summary) {
+
         if (!hasText(title)) {
             throw new PostException(PostErrorCode.POST_TITLE_EMPTY);
         }

@@ -16,7 +16,7 @@ import org.testcontainers.junit.jupiter.Container;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test-container")
 @Transactional
-public abstract class AbstractServiceMysqlTestContainer extends AbstractIntegrationTest {
+public abstract class AbstractMysqlTestContainer extends AbstractIntegrationTest {
     @Container
     protected static final MySQLContainer mySQLContainer = new MySQLContainer<>("mysql:8.0.30")
             .withUsername("test")
