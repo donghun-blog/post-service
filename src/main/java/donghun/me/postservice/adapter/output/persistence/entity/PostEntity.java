@@ -38,6 +38,7 @@ public class PostEntity extends BaseTimeEntity {
         this.visible = visible;
         this.thumbnail = thumbnail;
         this.summary = summary;
+        
     }
 
     public void addTag(TagEntity tagEntity) {
