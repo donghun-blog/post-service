@@ -21,6 +21,7 @@ public class PostEntity extends BaseTimeEntity {
 
     private String title;
     @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String contents;
     private boolean visible;
     private String thumbnail;
