@@ -29,6 +29,6 @@ public class PostQueryService implements PostQueryUseCase {
     @Override
     public Page<PostDto> getPage(Pageable pageable) {
         Page<Post> posts = queryPostPort.getPage(pageable);
-        return posts.map(PostDto::of);
+        return posts.map(p -> PostDto.of(p, s3Properties.getAbsolutePath()));
     }
 }

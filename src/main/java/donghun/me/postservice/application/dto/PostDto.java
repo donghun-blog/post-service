@@ -22,13 +22,15 @@ public record PostDto(
     public PostDto {
     }
 
-    public static PostDto of(Post post) {
+    public static PostDto of(Post post, String absolutePath) {
         return PostDto.builder()
                       .id(post.getId())
                       .title(post.getTitle())
                       .contents(post.getContents())
                       .visible(post.isVisible())
-                      .thumbnail(post.getThumbnail())
+                      .thumbnail(
+                              post.isThumbnailEmpty() ? null : absolutePath + post.getThumbnail()
+                      )
                       .summary(post.getSummary())
                       .tags(
                               post.getTags()
