@@ -4,10 +4,9 @@ import donghun.me.postservice.domain.dto.CreatePostDomainModelDto;
 import donghun.me.postservice.domain.exception.PostErrorCode;
 import donghun.me.postservice.domain.exception.PostException;
 import donghun.me.postservice.domain.service.ContentsAnalyzeDomainService;
-import donghun.me.postservice.domain.service.ThumbnailDomainService;
+import donghun.me.postservice.domain.service.ImagePathGenerateDomainService;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -68,7 +67,7 @@ public class Post extends AbstractBaseDomainModel {
             if (!hasText(dto.thumbnail())) {
                 thumbnail = ContentsAnalyzeDomainService.getThumbnail(dto.contents());
             } else {
-                thumbnail = ThumbnailDomainService.generate(dto.thumbnail());
+                thumbnail = ImagePathGenerateDomainService.generate(dto.thumbnail());
             }
 
             return Post.builder()

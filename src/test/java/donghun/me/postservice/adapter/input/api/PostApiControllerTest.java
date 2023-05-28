@@ -8,6 +8,7 @@ import donghun.me.postservice.application.port.input.PostCommandUseCase;
 import donghun.me.postservice.application.port.input.PostQueryUseCase;
 import donghun.me.postservice.common.EmptyParameters;
 import donghun.me.postservice.common.environment.AbstractPresentationTest;
+import donghun.me.postservice.fixture.MockMultipartFileFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -249,16 +250,6 @@ class PostApiControllerTest extends AbstractPresentationTest {
                                              "태그1", "태그2"
                                      ))
                     ;
-        }
-    }
-
-    static class MockMultipartFileFixture {
-        public static MockMultipartFile complete() {
-            return new MockMultipartFile(
-                    "thumbnail",
-                    "test.png",
-                    MULTIPART_FORM_DATA_VALUE,
-                    "test.png".getBytes());
         }
     }
 }
