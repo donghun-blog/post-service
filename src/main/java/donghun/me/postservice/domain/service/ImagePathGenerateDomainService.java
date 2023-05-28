@@ -2,7 +2,7 @@ package donghun.me.postservice.domain.service;
 
 import java.util.UUID;
 
-public class ThumbnailDomainService {
+public class ImagePathGenerateDomainService {
     public static String generate(String path) {
         return String.format("%s.%s", UUID.randomUUID(), getExtension(path));
     }

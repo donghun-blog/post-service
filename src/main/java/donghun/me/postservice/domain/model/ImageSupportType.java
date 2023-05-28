@@ -1,6 +1,6 @@
 package donghun.me.postservice.domain.model;
 
-import donghun.me.postservice.domain.service.ThumbnailDomainService;
+import donghun.me.postservice.domain.service.ImagePathGenerateDomainService;
 
 import java.util.EnumSet;
 
@@ -12,7 +12,7 @@ public enum ImageSupportType {
     ;
 
     public static boolean isSupport(String thumbnail) {
-        String extension = ThumbnailDomainService.getExtension(thumbnail);
+        String extension = ImagePathGenerateDomainService.getExtension(thumbnail);
         return EnumSet.allOf(ImageSupportType.class)
                       .stream()
                       .anyMatch(e -> e.name().equals(extension.toUpperCase()));
