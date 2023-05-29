@@ -18,6 +18,7 @@ public class DetailPost {
         private final List<TagResponse> tags;
         private final LocalDateTime createdAt;
         private final LocalDateTime modifiedAt;
+        private final boolean visible;
 
         private Response(PostDetailDto detailDto) {
             this.id = detailDto.id();
@@ -25,6 +26,7 @@ public class DetailPost {
             this.contents = detailDto.contents();
             this.thumbnail = detailDto.thumbnail();
             this.summary = detailDto.summary();
+            this.visible = detailDto.visible();
 
             this.tags = detailDto.tags()
                      .stream()
