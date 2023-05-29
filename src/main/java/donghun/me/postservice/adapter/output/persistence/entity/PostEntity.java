@@ -1,5 +1,7 @@
 package donghun.me.postservice.adapter.output.persistence.entity;
 
+import donghun.me.postservice.domain.model.Post;
+import donghun.me.postservice.domain.model.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,7 +40,18 @@ public class PostEntity extends BaseTimeEntity {
         this.visible = visible;
         this.thumbnail = thumbnail;
         this.summary = summary;
-        
+    }
+
+    public void update(Post post) {
+        this.title = post.getTitle();
+        this.contents = post.getContents();
+        this.visible = post.isVisible();
+        this.thumbnail = post.getThumbnail();
+        this.summary = post.getSummary();
+    }
+
+    public void tagClear() {
+        this.postTags.clear();
     }
 
     public void addTag(TagEntity tagEntity) {

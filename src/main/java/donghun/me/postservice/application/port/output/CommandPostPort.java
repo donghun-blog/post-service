@@ -5,5 +5,5 @@ import donghun.me.postservice.domain.model.Post;
 public interface CommandPostPort {
     Post save(Post post);
     void delete(Long postId);
-
+    void update(Post post);
 }
