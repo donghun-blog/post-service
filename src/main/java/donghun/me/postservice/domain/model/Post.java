@@ -1,6 +1,7 @@
 package donghun.me.postservice.domain.model;
 
 import donghun.me.postservice.domain.dto.CreatePostDomainModelDto;
+import donghun.me.postservice.domain.dto.UpdatePostDomainModelDto;
 import donghun.me.postservice.domain.exception.PostErrorCode;
 import donghun.me.postservice.domain.exception.PostException;
 import donghun.me.postservice.domain.service.ContentsAnalyzeDomainService;
@@ -44,9 +45,9 @@ public class Post extends AbstractBaseDomainModel {
         this.id = id;
         this.title = title;
         this.contents = contents;
-        this.thumbnail = thumbnail;
+        this.thumbnail = hasText(thumbnail) ? thumbnail : null;
         this.visible = visible;
-        this.summary = summary;
+        this.summary = hasText(summary) ? summary : null;
 
         for (Tag tag : tags) {
             this.tags.add(tag);
@@ -56,8 +57,43 @@ public class Post extends AbstractBaseDomainModel {
     public boolean isThumbnailEmpty() {
         return !hasText(thumbnail);
     }
+
     public List<Tag> getTags() {
         return tags.getTags();
+    }
+
+    public void update(UpdatePostDomainModelDto updateDomainModelDto) {
+
+        if (!hasText(updateDomainModelDto.title())) {
+            throw new PostException(PostErrorCode.POST_TITLE_EMPTY);
+        }
+
+        if (!hasText(updateDomainModelDto.contents())) {
+            throw new PostException(PostErrorCode.POST_CONTENTS_EMPTY);
+        }
+
+        String thumbnail = null;
+        if (hasText(updateDomainModelDto.thumbnail())) {
+            thumbnail = ImagePathGenerateDomainService.generate(updateDomainModelDto.thumbnail());
+        } else {
+            thumbnail = ContentsAnalyzeDomainService.getThumbnail(updateDomainModelDto.contents());
+        }
+
+
+        if (hasText(thumbnail) && !ImageSupportType.isSupport(thumbnail)) {
+            throw new PostException(IMAGE_EXTENSION_NOT_SUPPORT);
+        }
+
+        this.title = updateDomainModelDto.title();
+        this.contents = updateDomainModelDto.contents();
+        this.thumbnail = thumbnail;
+        this.visible = updateDomainModelDto.visible();
+        this.summary = updateDomainModelDto.summary();
+
+        this.tags.clear();
+        for (Tag tag : updateDomainModelDto.tags()) {
+            this.tags.add(tag);
+        }
     }
 
     public static class Factory {

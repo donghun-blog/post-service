@@ -1,6 +1,6 @@
 package donghun.me.postservice.adapter.input.api.dto;
 
-import donghun.me.postservice.application.dto.CreatePostCommand;
+import donghun.me.postservice.application.dto.UpdatePostCommand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class CreatePost {
+public class UpdatePost {
     @Getter
     @NoArgsConstructor
     public static class Request {
@@ -34,8 +34,8 @@ public class CreatePost {
             this.tags = tags;
         }
 
-        public CreatePostCommand toCommand(MultipartFile thumbnail) {
-            return CreatePostCommand.builder()
+        public UpdatePostCommand toCommand(MultipartFile thumbnail) {
+            return UpdatePostCommand.builder()
                                     .title(title)
                                     .contents(contents)
                                     .visible(visible)
@@ -54,8 +54,9 @@ public class CreatePost {
             this.postId = postId;
         }
 
-        public static BaseResponse<Response> success(Long postId) {
-            return BaseResponse.success(new Response(postId));
+        public static BaseResponse<UpdatePost.Response> success(Long postId) {
+            return BaseResponse.success(new UpdatePost.Response(postId));
         }
     }
+
 }

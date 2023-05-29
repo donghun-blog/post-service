@@ -1,11 +1,13 @@
 package donghun.me.postservice.application.service;
 
 import donghun.me.postservice.application.dto.CreatePostCommand;
+import donghun.me.postservice.application.dto.UpdatePostCommand;
 import donghun.me.postservice.application.port.input.PostCommandUseCase;
 import donghun.me.postservice.application.port.output.CommandPostPort;
 import donghun.me.postservice.application.port.output.QueryPostPort;
 import donghun.me.postservice.application.port.output.UploadImagePort;
 import donghun.me.postservice.domain.dto.CreatePostDomainModelDto;
+import donghun.me.postservice.domain.dto.UpdatePostDomainModelDto;
 import donghun.me.postservice.domain.exception.PostException;
 import donghun.me.postservice.domain.model.Post;
 import donghun.me.postservice.domain.model.Tag;
@@ -50,6 +52,20 @@ public class PostCommandService implements PostCommandUseCase {
             throw new PostException(POST_NOT_FOUND);
         }
         commandPostPort.delete(postId);
+    }
+
+    @Override
+    @Transactional
+    public void updatePost(Long postId, UpdatePostCommand command) {
+        // 게시글 조회
+        Post post = queryPostPort.findById(postId);
+
+        // 태그 조회
+        List<Tag> tags = getTags(command.tags());
+
+        UpdatePostDomainModelDto domainModelDto = command.toDomainModelDto(tags);
+        post.update(domainModelDto);
+        commandPostPort.update(post);
     }
 
     private List<Tag> getTags(List<String> insertTag) {

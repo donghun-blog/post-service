@@ -36,6 +36,16 @@ public class PostApiController {
         return DeletePost.Response.success(postId);
     }
 
+    @PutMapping("/{postId}")
+    public BaseResponse<UpdatePost.Response> update(
+            @PathVariable Long postId,
+            @Valid @RequestPart(value = "post") UpdatePost.Request request,
+            @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail
+    ) {
+        postCommandUseCase.updatePost(postId, request.toCommand(thumbnail));
+        return UpdatePost.Response.success(postId);
+    }
+
     @GetMapping("/{postId}")
     public BaseResponse<DetailPost.Response> detail(@PathVariable Long postId) {
         PostDetailDto postDetailDto = postQueryUseCase.findById(postId);

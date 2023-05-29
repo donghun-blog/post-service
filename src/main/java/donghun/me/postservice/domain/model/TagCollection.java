@@ -36,4 +36,8 @@ public class TagCollection {
     public Integer size() {
         return tags.size();
     }
+
+    public void clear() {
+        tags.clear();
+    }
 }

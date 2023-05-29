@@ -6,6 +6,7 @@ import donghun.me.postservice.adapter.output.persistence.repository.PostReposito
 import donghun.me.postservice.adapter.output.persistence.repository.PostTagRepository;
 import donghun.me.postservice.adapter.output.persistence.repository.TagRepository;
 import donghun.me.postservice.application.dto.CreatePostCommand;
+import donghun.me.postservice.application.dto.UpdatePostCommand;
 import donghun.me.postservice.application.port.output.UploadImagePort;
 import donghun.me.postservice.common.EmptyParameters;
 import donghun.me.postservice.common.environment.AbstractServiceMysqlTestContainer;
@@ -326,5 +327,109 @@ class PostCommandServiceTestService extends AbstractServiceMysqlTestContainer {
                 .hasSize(0);
         assertThat(postRepository.findAll())
                 .hasSize(0);
+    }
+
+    @DisplayName("게시글 엔티티를 업데이트 후 값을 확인한다.")
+    @Test
+    void update() {
+        // given
+        TagEntity tagEntity1 = TagEntity.builder()
+                                        .name("Spring Boot")
+                                        .build();
+
+        TagEntity tagEntity2 = TagEntity.builder()
+                                        .name("Spring Security")
+                                        .build();
+
+        tagRepository.save(tagEntity1);
+        tagRepository.save(tagEntity2);
+
+
+        PostEntity postEntity = PostEntityFixture.complete()
+                                                 .id(null)
+                                                 .build();
+
+        postEntity.addTag(tagEntity1);
+        postEntity.addTag(tagEntity2);
+
+        postRepository.save(postEntity);
+
+        final String updateTitle = "update Title";
+        final String updateContents = "update Contents";
+        final boolean updateVisible = false;
+        final String updateSummary = "updateSummary";
+        final List<String> updateTags = List.of(
+                "update Tag1",
+                "update Tag2",
+                "update Tag3"
+        );
+
+        final String updateThumbnailName = "update_Tesg.png";
+        MockMultipartFile mockMultipartFile = new MockMultipartFile(
+                "thumbnail",
+                updateThumbnailName,
+                MULTIPART_FORM_DATA_VALUE,
+                updateThumbnailName.getBytes());
+
+
+        UpdatePostCommand command = UpdatePostCommand.builder()
+                                                     .title(updateTitle)
+                                                     .contents(updateContents)
+                                                     .visible(updateVisible)
+                                                     .summary(updateSummary)
+                                                     .tags(updateTags)
+                                                     .thumbnail(mockMultipartFile)
+                                                     .build();
+
+        // when
+        postCommandService.updatePost(postEntity.getId(), command);
+
+        // then
+        PostEntity findPostEntity = postRepository.findById(postEntity.getId())
+                                                  .orElseThrow();
+
+        assertThat(findPostEntity)
+                .isNotNull()
+                .extracting("title", "contents", "visible", "summary")
+                .contains(
+                        updateTitle,
+                        updateContents,
+                        updateVisible,
+                        updateSummary
+                );
+
+        assertThat(findPostEntity.getThumbnail())
+                .isNotBlank();
+
+        assertThat(findPostEntity.getPostTags())
+                .isNotNull()
+                .hasSize(updateTags.size());
+
+        assertThat(findPostEntity.getPostTags()
+                                 .get(0)
+                                 .getTag())
+                .isNotNull()
+                .extracting("name")
+                        .isEqualTo(updateTags.get(0));
+
+        assertThat(findPostEntity.getPostTags()
+                                 .get(1)
+                                 .getTag())
+                .isNotNull()
+                .extracting("name")
+                .isEqualTo(updateTags.get(1));
+
+        assertThat(findPostEntity.getPostTags()
+                                 .get(2)
+                                 .getTag())
+                .isNotNull()
+                .extracting("name")
+                .isEqualTo(updateTags.get(2));
+
+        List<TagEntity> tagEntityList = tagRepository.findAll();
+        assertThat(tagEntityList)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(5);
     }
 }
