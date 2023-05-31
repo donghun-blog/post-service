@@ -3,6 +3,7 @@ package donghun.me.postservice.application.service;
 import donghun.me.postservice.adapter.output.s3.config.S3Properties;
 import donghun.me.postservice.application.dto.PostDetailDto;
 import donghun.me.postservice.application.dto.PostDto;
+import donghun.me.postservice.application.dto.SearchCondition;
 import donghun.me.postservice.application.port.input.PostQueryUseCase;
 import donghun.me.postservice.application.port.output.QueryPostPort;
 import donghun.me.postservice.domain.model.Post;
@@ -27,8 +28,8 @@ public class PostQueryService implements PostQueryUseCase {
     }
 
     @Override
-    public Page<PostDto> getPage(Pageable pageable) {
-        Page<Post> posts = queryPostPort.getPage(pageable);
+    public Page<PostDto> getPage(Pageable pageable, SearchCondition condition) {
+        Page<Post> posts = queryPostPort.getPage(pageable, condition);
         return posts.map(p -> PostDto.of(p, s3Properties.getAbsolutePath()));
     }
 }
