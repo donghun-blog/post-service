@@ -1,10 +1,10 @@
 package donghun.me.postservice.adapter.output.persistence.repository;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import donghun.me.postservice.adapter.output.persistence.entity.PostEntity;
+import donghun.me.postservice.application.dto.SearchCondition;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +18,7 @@ import static com.querydsl.core.types.dsl.Wildcard.count;
 import static donghun.me.postservice.adapter.output.persistence.entity.QPostEntity.postEntity;
 import static donghun.me.postservice.adapter.output.persistence.entity.QPostTagEntity.postTagEntity;
 import static donghun.me.postservice.adapter.output.persistence.entity.QTagEntity.tagEntity;
+import static org.springframework.util.StringUtils.hasText;
 
 @Repository
 @RequiredArgsConstructor
@@ -51,7 +52,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
     }
 
     @Override
-    public Page<PostEntity> getPage(Pageable pageable) {
+    public Page<PostEntity> getPage(Pageable pageable, SearchCondition condition) {
         List<PostEntity> content = queryFactory
                 .select(postEntity)
                 .from(postEntity)
@@ -59,7 +60,10 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 .fetchJoin()
                 .leftJoin(postTagEntity.tag, tagEntity)
                 .fetchJoin()
-                .where(isVisible())
+                .where(
+                        isVisible(),
+                        titleEq(condition.keyword())
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(postEntity.id.desc())
@@ -68,9 +72,16 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
         JPAQuery<Long> countQuery = queryFactory
                 .select(count)
                 .from(postEntity)
-                .where(isVisible());
+                .where(
+                        isVisible(),
+                        titleEq(condition.keyword())
+                );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    private BooleanExpression titleEq(String word) {
+        return hasText(word) ? postEntity.title.contains(word) : null;
     }
 
     private BooleanExpression isVisible() {
