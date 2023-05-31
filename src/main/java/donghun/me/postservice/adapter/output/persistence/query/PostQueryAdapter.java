@@ -3,6 +3,7 @@ package donghun.me.postservice.adapter.output.persistence.query;
 import donghun.me.postservice.adapter.output.persistence.entity.PostEntity;
 import donghun.me.postservice.adapter.output.persistence.mapper.PostMapper;
 import donghun.me.postservice.adapter.output.persistence.repository.PostQueryRepository;
+import donghun.me.postservice.application.dto.SearchCondition;
 import donghun.me.postservice.application.port.output.QueryPostPort;
 import donghun.me.postservice.domain.exception.PostException;
 import donghun.me.postservice.domain.model.Post;
@@ -33,8 +34,8 @@ public class PostQueryAdapter implements QueryPostPort {
     }
 
     @Override
-    public Page<Post> getPage(Pageable pageable) {
-        Page<PostEntity> posts = postQueryRepository.getPage(pageable);
+    public Page<Post> getPage(Pageable pageable, SearchCondition condition) {
+        Page<PostEntity> posts = postQueryRepository.getPage(pageable, condition);
         return posts.map(postMapper::toDomainModel);
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -53,8 +55,10 @@ public class PostApiController {
     }
 
     @GetMapping
-    public BaseResponse<Page<ListPost.Response>> getPage(Pageable pageable) {
-        Page<PostDto> posts = postQueryUseCase.getPage(pageable);
+    public BaseResponse<Page<ListPost.Response>> getPage(
+            Pageable pageable,
+            @ModelAttribute SearchPost request) {
+        Page<PostDto> posts = postQueryUseCase.getPage(pageable, request.toCondition());
         return ListPost.Response.success(posts);
     }
 }

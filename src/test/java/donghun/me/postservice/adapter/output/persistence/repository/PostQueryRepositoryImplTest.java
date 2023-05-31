@@ -2,6 +2,7 @@ package donghun.me.postservice.adapter.output.persistence.repository;
 
 import donghun.me.postservice.adapter.output.persistence.entity.PostEntity;
 import donghun.me.postservice.adapter.output.persistence.entity.TagEntity;
+import donghun.me.postservice.application.dto.SearchCondition;
 import donghun.me.postservice.common.environment.AbstractDataAccessMysqlTestContainer;
 import donghun.me.postservice.fixture.PostEntityFixture;
 import org.assertj.core.api.Assertions;
@@ -273,7 +274,39 @@ class PostQueryRepositoryImplTest extends AbstractDataAccessMysqlTestContainer {
         Pageable pageable = PageRequest.of(0, size);
 
         // when
-        Page<PostEntity> result = postQueryRepository.getPage(pageable);
+        Page<PostEntity> result = postQueryRepository.getPage(pageable, new SearchCondition(null));
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getTotalElements()).isEqualTo(count);
+        assertThat(result.getSize()).isEqualTo(size);
+    }
+
+    @DisplayName("게시글 목록 조회 시 제목으로 검색 후 일치한 경우 페이징 처리해서 반환한다.")
+    @Test
+    void getPageSearchCondition() {
+        // given
+        final int size = 20;
+        final int count = 100;
+        List<TagEntity> tagEntities = saveTag();
+
+        List<PostEntity> postEntities = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            PostEntity postEntity = PostEntityFixture.complete()
+                                                     .id(null)
+                                                     .title("안녕" + i)
+                                                     .build();
+            postEntity.addTag(tagEntities.get(0));
+            postEntity.addTag(tagEntities.get(1));
+            postEntity.addTag(tagEntities.get(2));
+            postEntities.add(postEntity);
+        }
+
+        postRepository.saveAll(postEntities);
+        Pageable pageable = PageRequest.of(0, size);
+
+        // when
+        Page<PostEntity> result = postQueryRepository.getPage(pageable, new SearchCondition("안녕"));
 
         // then
         assertThat(result).isNotNull();
