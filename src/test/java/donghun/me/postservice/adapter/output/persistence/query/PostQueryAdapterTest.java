@@ -7,11 +7,11 @@ import donghun.me.postservice.adapter.output.persistence.mapper.TagMapper;
 import donghun.me.postservice.adapter.output.persistence.repository.PostQueryRepository;
 import donghun.me.postservice.adapter.output.persistence.repository.PostRepository;
 import donghun.me.postservice.adapter.output.persistence.repository.TagRepository;
+import donghun.me.postservice.application.dto.SearchCondition;
 import donghun.me.postservice.common.environment.AbstractDataAccessMysqlTestContainer;
 import donghun.me.postservice.domain.exception.PostException;
 import donghun.me.postservice.domain.model.Post;
 import donghun.me.postservice.fixture.PostEntityFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,7 +211,7 @@ class PostQueryAdapterTest extends AbstractDataAccessMysqlTestContainer {
         Pageable pageable = PageRequest.of(0, size);
 
         // when
-        Page<Post> result = postQueryAdapter.getPage(pageable);
+        Page<Post> result = postQueryAdapter.getPage(pageable, new SearchCondition(null));
 
         // then
         assertThat(result).isNotNull();

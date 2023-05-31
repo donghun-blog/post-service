@@ -27,8 +27,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -113,21 +112,21 @@ class PostApiControllerTest extends AbstractPresentationTest {
     void register() throws Exception {
         // given
         CreatePost.Request request = CreatePostFixture.complete()
-                .contents("## 1어람어람ㄴㅇㄹㅁㄴㅇ러ㅏㅁㄴ얼\n" +
-                        "\n" +
-                        "---\n" +
-                        "\n" +
-                        "### 이러마읾;이리민\n" +
-                        " \n" +
-                        "![alt text](https://winter-blog-bucket.s3.ap-northeast-2.amazonaws.com/post/b86cc745-4ba6-4b17-a81b-8181c0e19ef6.gif)'\n" +
-                        "\n" +
-                        "ㄱ,어럼 아래도 이미지\n" +
-                        "\n" +
-                        "### 기기기긱ㄱㅁㅇㄹ\n" +
-                        "\n" +
-                        "![alt text](https://winter-blog-bucket.s3.ap-northeast-2.amazonaws.com/post/ad051fad-f6f0-4f0e-86e2-fec065e76e40.jpeg)\n" +
-                        "\n" +
-                        "ㅁㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇ")
+                                                      .contents("## 1어람어람ㄴㅇㄹㅁㄴㅇ러ㅏㅁㄴ얼\n" +
+                                                              "\n" +
+                                                              "---\n" +
+                                                              "\n" +
+                                                              "### 이러마읾;이리민\n" +
+                                                              " \n" +
+                                                              "![alt text](https://winter-blog-bucket.s3.ap-northeast-2.amazonaws.com/post/b86cc745-4ba6-4b17-a81b-8181c0e19ef6.gif)'\n" +
+                                                              "\n" +
+                                                              "ㄱ,어럼 아래도 이미지\n" +
+                                                              "\n" +
+                                                              "### 기기기긱ㄱㅁㅇㄹ\n" +
+                                                              "\n" +
+                                                              "![alt text](https://winter-blog-bucket.s3.ap-northeast-2.amazonaws.com/post/ad051fad-f6f0-4f0e-86e2-fec065e76e40.jpeg)\n" +
+                                                              "\n" +
+                                                              "ㅁㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇ")
                                                       .build();
         MockMultipartFile mockMultipartFile = MockMultipartFileFixture.complete();
         MockMultipartFile mockAbout = createMockPost(request);
@@ -171,7 +170,7 @@ class PostApiControllerTest extends AbstractPresentationTest {
         // given
         final Long postId = 1L;
 
-        final String title=  "제목입니다.";
+        final String title = "제목입니다.";
         final String contents = "본문입니다.";
         final boolean visible = true;
         final String thumbnail = "thumbnail.png";
@@ -219,13 +218,19 @@ class PostApiControllerTest extends AbstractPresentationTest {
                .andExpect(jsonPath("$.body.contents").value(contents))
                .andExpect(jsonPath("$.body.thumbnail").value(thumbnail))
                .andExpect(jsonPath("$.body.summary").value(summary))
-               .andExpect(jsonPath("$.body.tags[0].id").value(tags.get(0).id()))
-               .andExpect(jsonPath("$.body.tags[0].name").value(tags.get(0).name()))
-               .andExpect(jsonPath("$.body.tags[1].id").value(tags.get(1).id()))
-               .andExpect(jsonPath("$.body.tags[1].name").value(tags.get(1).name()))
-               .andExpect(jsonPath("$.body.tags[2].id").value(tags.get(2).id()))
-               .andExpect(jsonPath("$.body.tags[2].name").value(tags.get(2).name()))
-               ;
+               .andExpect(jsonPath("$.body.tags[0].id").value(tags.get(0)
+                                                                  .id()))
+               .andExpect(jsonPath("$.body.tags[0].name").value(tags.get(0)
+                                                                    .name()))
+               .andExpect(jsonPath("$.body.tags[1].id").value(tags.get(1)
+                                                                  .id()))
+               .andExpect(jsonPath("$.body.tags[1].name").value(tags.get(1)
+                                                                    .name()))
+               .andExpect(jsonPath("$.body.tags[2].id").value(tags.get(2)
+                                                                  .id()))
+               .andExpect(jsonPath("$.body.tags[2].name").value(tags.get(2)
+                                                                    .name()))
+        ;
     }
 
     private MockMultipartFile createMockPost(CreatePost.Request request) throws JsonProcessingException {
